@@ -1,0 +1,152 @@
+import { Vec2 } from "./Vec2.js";
+import { Size } from "./Size.js";
+import { Tools } from "./Tools.js";
+
+export class Node {
+
+    constructor() {
+        this.pos = Vec2.new();
+        this.anchor = Vec2.with_pos(0.5, 0.5);
+        this.scale = 1.0;
+        this.z_order = 0;
+        this.visible = true;
+        this.opacity = 1.0;
+        this.rotation = 0.0;
+        this.children = new Map();
+
+        this.key = new String();
+        this.parent = null;
+    }
+
+    static new() {
+        return new Node();
+    }
+
+    get_position() {
+        return Vec2.from_other(this.pos);
+    }
+
+    set_position_with_pos(x, y) {
+        this.pos.set_with_pos(x, y);
+    }
+
+    set_position_with_other(other) {
+        this.pos.set_with_other(other);
+    }
+
+    get_scale() {
+        return this.scale;
+    }
+
+    set_scale(sc) {
+        this.scale = sc;
+    }
+
+    get_z_order() {
+        return this.z_order;
+    }
+
+    set_z_order(z_order) {
+        this.z_order = z_order;
+    }
+
+    get_opacity() {
+        return this.opacity;
+    }
+
+    set_opacity(opacity) {
+        this.opacity = opacity;
+    }
+
+    get_visible() {
+        return this.visible;
+    }
+
+    set_visible(visible) {
+        this.visible = visible;
+    }
+
+    get_rotation() {
+        return this.rotation;
+    }
+
+    set_rotation(rotation) {
+        this.rotation = rotation;
+    }
+
+    add_child(child) {
+        this.add_child_with_key(child, Tools.generate_random_string(32));
+    }
+
+    add_child_with_key(child, key) {
+        if (child.parent != null) {
+            return;
+        }
+        this.children.set(key, child);
+        child.parent = this;
+        child.key = key;
+    }
+
+    remove_child(key) {
+        if (!this.children.has(key)) {
+            return;
+        }
+        var child = this.children.get(key);
+        this.children.delete(key);
+        child.key = "";
+        child.parent = null;
+    }
+
+    remove_from_parent() {
+        if (this.parent == null) {
+            return;
+        }
+        this.parent.remove_child(this.key);
+    }
+
+
+
+
+
+    visit(ctx) {
+        if (!this.visible) {
+            return;
+        }
+
+        var arr = Array.from(this.children);
+        arr.sort(function (a, b) {
+            return a[1].z_order - b[1].z_order;
+        });
+
+        var x = this.pos.x;
+        var y = this.pos.y;
+        ctx.save();
+        ctx.globalAlpha = ctx.globalAlpha * this.opacity;
+        var dx = 0;
+        var dy = 0;
+        ctx.scale(this.scale, this.scale);
+        ctx.translate(x + dx, y + dy);
+        ctx.rotate(this.rotation);
+
+        var p = 0;
+        for (var i = 0; i < arr.length; ++i) {
+            var ch = arr[i][1];
+            if (ch.z_order == 0) {
+                p = i;
+                break;
+            }
+            ch.visit(ctx);
+        }
+
+        for (var i = p; i < arr.length; ++i) {
+            var ch = arr[i][1];
+            ch.visit(ctx);
+        }
+
+        ctx.restore();
+
+    }
+
+
+
+}
