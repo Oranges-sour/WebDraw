@@ -19,12 +19,18 @@ sp.set_position_with_pos(0, 0);
 sp.set_opacity(0.5);
 sp.set_rotation(0.3);
 
+
+
 sp0.add_child(sp);
 
 function init() {
     Director.init(ele_canvas, 60);
 
     Director.add_child(sp0, "l0");
+
+    sp.add_schedule(function () {
+        sp.set_rotation(sp.get_rotation() + 0.1);
+    }, 1 / 60);
 }
 
 // function update() {
