@@ -16,6 +16,8 @@ export class Node {
 
         this.key = new String();
         this.parent = null;
+
+        this.sche = new Map();
     }
 
     static new() {
@@ -31,6 +33,18 @@ export class Node {
     }
 
     set_position_with_other(other) {
+        this.pos.set_with_other(other);
+    }
+
+    get_anchor() {
+        return Vec2.from_other(this.anchor);
+    }
+
+    set_anchor_with_pos(x, y) {
+        this.anchor.set_with_pos(x, y);
+    }
+
+    set_anchor_with_other(other) {
         this.pos.set_with_other(other);
     }
 
@@ -104,11 +118,79 @@ export class Node {
         this.parent.remove_child(this.key);
     }
 
+    add_schedule(func, delta_time, first_delay_time = 0, schedule_times = 2147483648) {
+        this.add_schedule_with_key(
+            func, delta_time, Tools.generate_random_string(32),
+            first_delay_time, schedule_times);
+    }
+
+    add_schedule_with_key(func, delta_time, key, first_delay_time = 0, schedule_times = 2147483648) {
+        var ob = new Object();
+        ob.func = func;
+        ob.delta_time = delta_time;
+        ob.delta1 = first_delay_time;
+        ob.key = key;
+        //因为有first_delay_time的存在，以及实现方式的原因，会导致多调用一次，因此使
+        //schedule_times - 1来解决问题
+        ob.schedule_times = schedule_times - 1;
+
+        this.sche.set(key, ob);
+    }
+
+    update_schedule(time) {
+        var need_delete = new Array();
+
+        this.sche.forEach(function (ob) {
+
+            if (ob.schedule_times <= 0) {
+                need_delete.push(ob.key);
+                return;
+            }
+
+            if (ob.delta1 >= time) {
+                ob.delta1 -= time;
+            } else if (ob.delta1 - time <= 0) {
+                ob.func();
+                ob.schedule_times -= 1;
+                ob.delta1 = ob.delta_time - time + ob.delta1;
+            }
+
+        });
+
+        var that = this;
+        need_delete.forEach(function (key) {
+            that.sche.delete(key);
+        });
+    }
 
 
+    onupdate(time) {
+        var arr = Array.from(this.children);
+        arr.sort(function (a, b) {
+            return a[1].z_order - b[1].z_order;
+        });
+
+        var p = 0;
+        for (var i = 0; i < arr.length; ++i) {
+            var ch = arr[i][1];
+            if (ch.z_order == 0) {
+                p = i;
+                break;
+            }
+            ch.onupdate(time);
+        }
+
+        this.update_schedule(time);
+
+        for (var i = p; i < arr.length; ++i) {
+            var ch = arr[i][1];
+            ch.onupdate(time);
+        }
+    }
 
 
     visit(ctx) {
+
         if (!this.visible) {
             return;
         }
@@ -144,9 +226,5 @@ export class Node {
         }
 
         ctx.restore();
-
     }
-
-
-
 }
