@@ -12,6 +12,12 @@ export class Sprite extends Node {
     }
 
     visit(ctx) {
+        this.set_size_with_size(this.img.width, this.img.height);
+
+        if (!this.get_visible()) {
+            return;
+        }
+
         var arr = Array.from(this.children);
         arr.sort(function (a, b) {
             return a[1].z_order - b[1].z_order;
@@ -21,8 +27,8 @@ export class Sprite extends Node {
         var y = this.pos.y;
         ctx.save();
         ctx.globalAlpha = ctx.globalAlpha * this.opacity;
-        var dx = this.img.width * this.anchor.x;
-        var dy = this.img.height * this.anchor.y;
+        var dx = this.size.w * this.anchor.x;
+        var dy = this.size.h * this.anchor.y;
         ctx.scale(this.scale, this.scale);
         ctx.translate(x + dx, y + dy);
         ctx.rotate(this.rotation);

@@ -8,6 +8,7 @@ export class Node {
         this.pos = Vec2.new();
         this.anchor = Vec2.with_pos(0.5, 0.5);
         this.scale = 1.0;
+        this.size = Size.new();
         this.z_order = 0;
         this.visible = true;
         this.opacity = 1.0;
@@ -24,8 +25,20 @@ export class Node {
         return new Node();
     }
 
+    get_size() {
+        return Size.with_other(this.size);
+    }
+
+    set_size_with_other(other) {
+        this.size.set_with_other(other);
+    }
+
+    set_size_with_size(w, h) {
+        this.size.set_with_size(w, h);
+    }
+
     get_position() {
-        return Vec2.from_other(this.pos);
+        return Vec2.with_other(this.pos);
     }
 
     set_position_with_pos(x, y) {
@@ -37,7 +50,7 @@ export class Node {
     }
 
     get_anchor() {
-        return Vec2.from_other(this.anchor);
+        return Vec2.with_other(this.anchor);
     }
 
     set_anchor_with_pos(x, y) {
@@ -191,7 +204,7 @@ export class Node {
 
     visit(ctx) {
 
-        if (!this.visible) {
+        if (!this.get_visible()) {
             return;
         }
 
@@ -204,8 +217,8 @@ export class Node {
         var y = this.pos.y;
         ctx.save();
         ctx.globalAlpha = ctx.globalAlpha * this.opacity;
-        var dx = 0;
-        var dy = 0;
+        var dx = this.size.w * this.anchor.x;
+        var dy = this.size.h * this.anchor.y;
         ctx.scale(this.scale, this.scale);
         ctx.translate(x + dx, y + dy);
         ctx.rotate(this.rotation);
