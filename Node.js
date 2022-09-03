@@ -114,6 +114,13 @@ export class Node {
         child.key = key;
     }
 
+    get_child_with_key(key) {
+        if (this.children.has(key)) {
+            return this.children.get(key);
+        }
+        return undefined;
+    }
+
     remove_child(key) {
         if (!this.children.has(key)) {
             return;

@@ -31,6 +31,10 @@ export class Director {
     static add_child_with_key(child, key) {
         base_node.add_child_with_key(child, key);
     }
+    
+    static get_child_with_key(key){
+        return base_node.get_child_with_key(key);
+    }
 
     static remove_child(key) {
         base_node.remove_child(key);
