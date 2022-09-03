@@ -1,7 +1,7 @@
 import { Sprite } from "./Sprite.js";
 import { Label } from "./Label.js";
 import { Node } from "./Node.js";
-import { Director } from "./Director.js";
+import { Director, DirectorManager } from "./Director.js";
 
 window.onload = function () {
     init();
@@ -28,12 +28,13 @@ var spp = Label.with_font_color(70, "Arial", "rgb(255,255,255)");
 spp.set_text("TTTTTEEE!");
 spp.set_position_with_pos(0, 100);
 
+var my_director = DirectorManager.new_director(ele_canvas, 60);
+
 function init() {
-    Director.init(ele_canvas, 60);
 
-    Director.add_child(sp0, "l0");
+    my_director.add_child(sp0, "l0");
 
-    Director.add_child(spp);
+    my_director.add_child(spp);
 
     sp.add_schedule(function () {
         sp.set_rotation(sp.get_rotation() + 0.1);
