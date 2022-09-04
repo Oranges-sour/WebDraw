@@ -2,6 +2,7 @@ import { Sprite } from "./Sprite.js";
 import { Label } from "./Label.js";
 import { Node } from "./Node.js";
 import { Vec2 } from "./Vec2.js";
+import { DrawNode } from "./DrawNode.js";
 import { ImagePool } from "./ImagePool.js";
 import { Director, DirectorManager } from "./Director.js";
 
@@ -22,10 +23,16 @@ sp.set_position_with_pos(300, 300);
 sp.set_opacity(0.5);
 sp.set_anchor_with_pos(0.5, 0.5);
 sp.set_rotation(0.3);
-
-
-
 sp0.add_child(sp);
+
+var dr = DrawNode.new();
+sp0.add_child(dr);
+
+dr.add_rect(Vec2.with_pos(0, 0), 200, 300, true, "rgb(250,70,112)");
+
+dr.add_circle(Vec2.with_pos(0, 0), 200, true, "rgb(250,70,112)");
+
+
 
 var spp = Label.with_font_color(70, "Arial", "rgb(255,255,255)");
 spp.set_text("TTTTTEEE!");
