@@ -1,3 +1,4 @@
+'use strict';
 import { Vec2 } from "./Vec2.js";
 import { Size } from "./Size.js";
 import { Tools } from "./Tools.js";
@@ -15,6 +16,8 @@ export class Node {
         this.rotation = 0.0;
         this.children = new Map();
 
+        this.component = new Map();
+
         this.key = new String();
         this.parent = null;
 
@@ -23,6 +26,28 @@ export class Node {
 
     static new() {
         return new Node();
+    }
+
+    add_component_with_key(obj, key) {
+        this.component.set(key, obj);
+    }
+
+    remove_component_with_key(key) {
+        if (!this.component.has(key)) {
+            return;
+        }
+        this.component.delete(key);
+    }
+
+    get_component_with_key(key) {
+        if (!this.component.has(key)) {
+            return undefined;
+        }
+        return this.component.get(key);
+    }
+
+    get_scaled_size() {
+        return Size.scalar(this.get_size(), this.get_scale());
     }
 
     get_size() {
@@ -226,8 +251,9 @@ export class Node {
         ctx.globalAlpha = ctx.globalAlpha * this.opacity;
         var dx = this.size.w * this.anchor.x;
         var dy = this.size.h * this.anchor.y;
+
+        ctx.translate(x, y);
         ctx.scale(this.scale, this.scale);
-        ctx.translate(x + dx, y + dy);
         ctx.rotate(this.rotation);
 
         var p = 0;

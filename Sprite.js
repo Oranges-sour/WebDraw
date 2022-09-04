@@ -1,3 +1,4 @@
+'use strict';
 import { Node } from "./Node.js";
 import { ImagePool } from "./ImagePool.js";
 
@@ -27,10 +28,13 @@ export class Sprite extends Node {
         var y = this.pos.y;
         ctx.save();
         ctx.globalAlpha = ctx.globalAlpha * this.opacity;
+
         var dx = this.size.w * this.anchor.x;
         var dy = this.size.h * this.anchor.y;
+
+
+        ctx.translate(x, y);
         ctx.scale(this.scale, this.scale);
-        ctx.translate(x + dx, y + dy);
         ctx.rotate(this.rotation);
 
         var p = 0;
