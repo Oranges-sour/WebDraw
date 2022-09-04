@@ -1,6 +1,8 @@
 import { Sprite } from "./Sprite.js";
 import { Label } from "./Label.js";
 import { Node } from "./Node.js";
+import { Vec2 } from "./Vec2.js";
+import { ImagePool } from "./ImagePool.js";
 import { Director, DirectorManager } from "./Director.js";
 
 window.onload = function () {
@@ -12,12 +14,13 @@ var ctx = ele_canvas.getContext("2d");
 
 var sp0 = Node.new();
 sp0.set_opacity(0.5);
-sp0.set_position_with_pos(100, 100);
+sp0.set_position_with_pos(0, 0);
 
 var sp = Sprite.new("src/26.png");
 sp.set_scale(0.1);
-sp.set_position_with_pos(0, 0);
+sp.set_position_with_pos(300, 300);
 sp.set_opacity(0.5);
+sp.set_anchor_with_pos(0.5, 0.5);
 sp.set_rotation(0.3);
 
 
@@ -37,7 +40,9 @@ function init() {
     my_director.add_child(spp);
 
     sp.add_schedule(function () {
-        sp.set_rotation(sp.get_rotation() + 0.1);
+        //sp.set_rotation(sp.get_rotation() + 0.1);
+
+        sp.set_scale(sp.get_scale() + 0.001);
     }, 1 / 60);
 }
 
