@@ -45,6 +45,10 @@ export class Node {
         return this.component.get(key);
     }
 
+    get_scaled_size() {
+        return Size.scalar(this.get_size(), this.get_scale());
+    }
+
     get_size() {
         return Size.with_other(this.size);
     }
