@@ -1,3 +1,4 @@
+'use strict';
 import { Vec2 } from "./Vec2.js";
 import { Size } from "./Size.js";
 import { Tools } from "./Tools.js";
